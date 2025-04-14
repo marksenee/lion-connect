@@ -177,6 +177,187 @@ npm run test:coverage
 5. 코드 리뷰
 6. 머지
 
-## �� 라이센스
+## 📄 라이센스
 
 MIT License
+
+## 마이페이지 개발 가이드
+
+### 1. 이력서 데이터 구조
+
+```typescript
+interface Resume {
+  // 기본 정보
+  name: string;
+  introduction: string;
+  email: string;
+  phone: string;
+
+  // 자기 소개
+  selfIntroduction: string;
+
+  // 업무 경험
+  workExperience: Array<{
+    company: string;
+    department: string;
+    position: string;
+    isCurrent: boolean;
+    description: string;
+  }>;
+
+  // 프로젝트
+  projects: Array<{
+    name: string;
+    organization: string;
+    period: string;
+    description: string;
+    image: File | null;
+    isRepresentative: boolean;
+  }>;
+
+  // 포트폴리오
+  portfolio: string;
+
+  // 기술 스택
+  skills: string[];
+
+  // 학력
+  education: Array<{
+    university: string;
+    major: string;
+    period: string;
+    description: string;
+  }>;
+
+  // 수상 및 활동
+  awards: Array<{
+    name: string;
+    period: string;
+    description: string;
+  }>;
+
+  // 자격증
+  certificates: Array<{
+    name: string;
+    organization: string;
+    date: string;
+    number: string;
+  }>;
+
+  // 블로그 및 깃허브
+  blog: string;
+  github: string;
+}
+```
+
+### 2. API 엔드포인트
+
+```typescript
+// 이력서 관련
+GET /api/resumes/:userId          // 이력서 조회
+POST /api/resumes                 // 이력서 생성
+PUT /api/resumes/:resumeId        // 이력서 수정
+DELETE /api/resumes/:resumeId     // 이력서 삭제
+
+// 프로젝트 이미지 업로드
+POST /api/resumes/projects/image  // 프로젝트 이미지 업로드
+```
+
+### 3. 데이터 검증 규칙
+
+```typescript
+// 기본 정보
+name: {
+  required: true,
+  minLength: 2,
+  maxLength: 50
+},
+email: {
+  required: true,
+  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+},
+phone: {
+  required: true,
+  pattern: /^[0-9-]+$/
+},
+
+// 업무 경험
+workExperience: {
+  company: {
+    required: true,
+    maxLength: 100
+  },
+  period: {
+    required: true,
+    pattern: /^\d{4}\.\d{2}\s*-\s*\d{4}\.\d{2}$/
+  }
+},
+
+// 프로젝트
+projects: {
+  name: {
+    required: true,
+    maxLength: 100
+  },
+  image: {
+    maxSize: 5 * 1024 * 1024, // 5MB
+    allowedTypes: ['image/jpeg', 'image/png']
+  }
+}
+```
+
+### 4. 에러 처리
+
+```typescript
+// 에러 응답 형식
+interface ErrorResponse {
+  status: number;
+  message: string;
+  errors?: {
+    [key: string]: string[];
+  };
+}
+
+// 주요 에러 코드
+400: '잘못된 요청',
+401: '인증 실패',
+403: '권한 없음',
+404: '리소스 없음',
+413: '파일 크기 초과',
+415: '지원하지 않는 파일 형식',
+500: '서버 오류'
+```
+
+### 5. 보안 고려사항
+
+1. 모든 API 요청에 JWT 토큰 인증 필요
+2. 파일 업로드 시 파일 크기와 형식 검증
+3. 사용자별 데이터 접근 권한 검증
+4. XSS 방지를 위한 입력값 검증
+5. CSRF 토큰 사용
+
+### 6. 성능 최적화
+
+1. 이력서 데이터 캐싱
+2. 이미지 리사이징 및 최적화
+3. 페이지네이션 적용
+4. 필요한 데이터만 조회하는 API 설계
+
+### 7. 테스트 케이스
+
+```typescript
+// 단위 테스트 예시
+describe("Resume API", () => {
+  it("should create a new resume", async () => {
+    // 테스트 코드
+  });
+
+  it("should validate resume data", async () => {
+    // 테스트 코드
+  });
+
+  it("should handle file upload", async () => {
+    // 테스트 코드
+  });
+});
+```
