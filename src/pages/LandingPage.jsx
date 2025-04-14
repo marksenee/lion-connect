@@ -8,6 +8,10 @@ import {
   FaCode,
   FaServer,
   FaChartLine,
+  FaCloud,
+  FaBullhorn,
+  FaGamepad,
+  FaCube,
 } from "react-icons/fa";
 
 const fadeIn = keyframes`
@@ -208,6 +212,26 @@ const categories = [
     name: "데이터분석",
     icon: <FaChartLine />,
     description: "데이터 분석 및 시각화",
+  },
+  {
+    name: "클라우드 엔지니어링",
+    icon: <FaCloud />,
+    description: "클라우드 인프라 구축 및 운영",
+  },
+  {
+    name: "그로스 마케터",
+    icon: <FaBullhorn />,
+    description: "데이터 기반 성장 전략 수립",
+  },
+  {
+    name: "유니티 게임 개발",
+    icon: <FaGamepad />,
+    description: "Unity 엔진 기반 게임 개발",
+  },
+  {
+    name: "블록체인",
+    icon: <FaCube />,
+    description: "블록체인 기술 개발 및 적용",
   },
 ];
 
