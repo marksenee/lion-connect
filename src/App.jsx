@@ -9,6 +9,7 @@ import CompanySignupPage from "./pages/CompanySignupPage";
 import LoginPage from "./pages/LoginPage";
 import CategoryListingPage from "./pages/CategoryListingPage";
 import CompanyServicePage from "./pages/CompanyServicePage";
+import MyPage from "./pages/MyPage";
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -61,7 +62,7 @@ const App = () => {
             <Logo to="/">라이언 커넥트</Logo>
             <NavLinks>
               <NavLink to="/login">로그인/회원가입</NavLink>
-              <NavLink to="/signup/student">마이페이지</NavLink>
+              <NavLink to="/mypage">마이페이지</NavLink>
               <NavLink to="/company">기업서비스</NavLink>
             </NavLinks>
           </NavContainer>
@@ -74,6 +75,7 @@ const App = () => {
           <Route path="/signup/company" element={<CompanySignupPage />} />
           <Route path="/category" element={<CategoryListingPage />} />
           <Route path="/company" element={<CompanyServicePage />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </AppContainer>
     </Router>

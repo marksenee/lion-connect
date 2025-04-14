@@ -1,70 +1,182 @@
-# Getting Started with Create React App
+# ConnectLion Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+ConnectLion의 프론트엔드 레포지토리입니다.
 
-## Available Scripts
+## 🚀 기술 스택
 
-In the project directory, you can run:
+- **React**: 18.2.0
+- **React Router**: 6.22.0
+- **Styled Components**: 6.1.8
+- **React Icons**: 5.0.1
+- **Axios**: 1.6.7
 
-### `yarn start`
+## 📁 프로젝트 구조
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+src/
+├── components/     # 재사용 가능한 컴포넌트
+├── pages/          # 페이지 컴포넌트
+├── styles/         # 스타일 관련 파일
+│   ├── theme.js    # 테마 설정
+│   └── GlobalStyle.js  # 전역 스타일
+├── utils/          # 유틸리티 함수
+└── App.jsx         # 메인 앱 컴포넌트
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ 개발 환경 설정
 
-### `yarn test`
+1. **의존성 설치**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `yarn build`
+2. **개발 서버 실행**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. **빌드**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm run build
+```
 
-### `yarn eject`
+## 🔧 주요 기능
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 1. 회원가입/로그인
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- 이메일/비밀번호 기반 회원가입
+- 소셜 로그인 (구글, 깃허브)
+- JWT 기반 인증
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 2. 프로필 관리
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- 개인 정보 수정
+- 포트폴리오 관리
+- 기술 스택 설정
 
-## Learn More
+### 3. 커뮤니티
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- 게시글 CRUD
+- 댓글 기능
+- 좋아요/북마크
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 4. 매칭 시스템
 
-### Code Splitting
+- 프로필 기반 매칭
+- 실시간 채팅
+- 알림 시스템
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📝 API 통신
 
-### Analyzing the Bundle Size
+### API 기본 설정
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```javascript
+// utils/api.js
+import axios from "axios";
 
-### Making a Progressive Web App
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+// 요청 인터셉터
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-### Advanced Configuration
+export default api;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 주요 API 엔드포인트
 
-### Deployment
+- 회원가입: `POST /api/auth/signup`
+- 로그인: `POST /api/auth/login`
+- 프로필 조회: `GET /api/users/profile`
+- 게시글 목록: `GET /api/posts`
+- 매칭 요청: `POST /api/matches`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🎨 스타일 가이드
 
-### `yarn build` fails to minify
+### 테마 설정
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```javascript
+// styles/theme.js
+export const theme = {
+  colors: {
+    primary: "#ff7710",
+    secondary: "#ff8c00",
+    white: "#ffffff",
+    gray: "#666666",
+    lightGray: "#f5f5f5",
+    border: "#e0e0e0",
+  },
+  spacing: {
+    xs: "0.25rem",
+    sm: "0.5rem",
+    md: "1rem",
+    lg: "1.5rem",
+    xl: "2rem",
+    xxl: "3rem",
+  },
+  // ... 기타 테마 설정
+};
+```
+
+### 컴포넌트 스타일링
+
+- Styled Components 사용
+- 테마 변수 활용
+- 반응형 디자인 적용
+
+## 🔄 상태 관리
+
+### 주요 상태
+
+- 사용자 인증 상태
+- 프로필 정보
+- 게시글 목록
+- 매칭 상태
+
+## 🧪 테스트
+
+### 테스트 실행
+
+```bash
+npm test
+```
+
+### 테스트 커버리지 확인
+
+```bash
+npm run test:coverage
+```
+
+## 📦 배포
+
+### 빌드 및 배포 과정
+
+1. `npm run build`로 프로덕션 빌드
+2. 빌드된 파일을 서버에 업로드
+3. Nginx/Apache 설정
+
+## 🤝 기여 가이드
+
+1. 이슈 생성
+2. 브랜치 생성 (`feature/기능명`)
+3. 코드 작성 및 테스트
+4. PR 생성
+5. 코드 리뷰
+6. 머지
+
+## �� 라이센스
+
+MIT License
