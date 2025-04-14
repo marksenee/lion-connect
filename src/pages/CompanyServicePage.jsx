@@ -418,6 +418,7 @@ const CompanyServicePage = () => {
       name: "김수료",
       profileImage: "https://randomuser.me/api/portraits/women/1.jpg",
       course: "KDT 프론트엔드 1기",
+      school: "서울대학교",
       skills: ["React", "JavaScript", "HTML", "CSS", "TypeScript", "Next.js"],
       portfolio: "https://example.com/portfolio",
       badges: ["grand", "tutor"],
@@ -434,6 +435,7 @@ const CompanyServicePage = () => {
       name: "이개발",
       profileImage: "https://randomuser.me/api/portraits/men/2.jpg",
       course: "KDT 백엔드 2기",
+      school: "연세대학교",
       skills: ["Java", "Spring Boot", "MySQL", "Docker", "AWS"],
       portfolio: "https://example.com/portfolio2",
       badges: ["excellent", "attendance"],
@@ -450,6 +452,7 @@ const CompanyServicePage = () => {
       name: "박디자인",
       profileImage: "https://randomuser.me/api/portraits/women/3.jpg",
       course: "KDT UI/UX 1기",
+      school: "고려대학교",
       skills: [
         "Figma",
         "Adobe XD",
@@ -472,6 +475,7 @@ const CompanyServicePage = () => {
       name: "정데이터",
       profileImage: "https://randomuser.me/api/portraits/men/4.jpg",
       course: "KDT 데이터분석 2기",
+      school: "한양대학교",
       skills: ["Python", "Pandas", "TensorFlow", "SQL", "Tableau"],
       portfolio: "https://example.com/portfolio4",
       badges: ["grand", "excellent"],
@@ -488,6 +492,7 @@ const CompanyServicePage = () => {
       name: "최앱개발",
       profileImage: "https://randomuser.me/api/portraits/women/5.jpg",
       course: "KDT 앱개발 1기",
+      school: "성균관대학교",
       skills: ["React Native", "Flutter", "Firebase", "Redux", "GraphQL"],
       portfolio: "https://example.com/portfolio5",
       badges: ["excellent", "attendance"],
@@ -504,6 +509,7 @@ const CompanyServicePage = () => {
       name: "강클라우드",
       profileImage: "https://randomuser.me/api/portraits/men/6.jpg",
       course: "KDT 클라우드 엔지니어링 1기",
+      school: "경희대학교",
       skills: ["AWS", "Kubernetes", "Terraform", "Docker", "CI/CD"],
       portfolio: "https://example.com/portfolio6",
       badges: ["good", "tutor"],
@@ -520,6 +526,7 @@ const CompanyServicePage = () => {
       name: "윤마케터",
       profileImage: "https://randomuser.me/api/portraits/women/7.jpg",
       course: "KDT 그로스 마케터 1기",
+      school: "서강대학교",
       skills: [
         "Google Analytics",
         "SEO",
@@ -542,6 +549,7 @@ const CompanyServicePage = () => {
       name: "장블록체인",
       profileImage: "https://randomuser.me/api/portraits/men/8.jpg",
       course: "KDT 블록체인 1기",
+      school: "숭실대학교",
       skills: ["Solidity", "Ethereum", "Web3.js", "Smart Contracts", "DeFi"],
       portfolio: "https://example.com/portfolio8",
       badges: ["grand", "tutor"],
@@ -558,6 +566,7 @@ const CompanyServicePage = () => {
       name: "한프론트",
       profileImage: "https://randomuser.me/api/portraits/women/9.jpg",
       course: "KDT 프론트엔드 2기",
+      school: "홍익대학교",
       skills: ["Vue.js", "Nuxt.js", "Tailwind CSS", "GraphQL", "Jest"],
       portfolio: "https://example.com/portfolio9",
       badges: ["good", "attendance"],
@@ -574,6 +583,7 @@ const CompanyServicePage = () => {
       name: "서백엔드",
       profileImage: "https://randomuser.me/api/portraits/men/10.jpg",
       course: "KDT 백엔드 1기",
+      school: "중앙대학교",
       skills: ["Node.js", "Express", "MongoDB", "Redis", "GraphQL"],
       portfolio: "https://example.com/portfolio10",
       badges: ["excellent", "tutor"],
@@ -654,6 +664,7 @@ const CompanyServicePage = () => {
               </ProfileIconContainer>
               <div>
                 <StudentName>{student.name}</StudentName>
+                <StudentInfo>{student.school}</StudentInfo>
                 <StudentInfo>{student.course}</StudentInfo>
               </div>
             </StudentProfile>
