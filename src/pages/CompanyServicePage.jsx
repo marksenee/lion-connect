@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { theme } from "../styles/theme";
+import { apis } from "../apis/apis";
 import {
   FaTrophy,
   FaStar,
@@ -10,6 +11,10 @@ import {
   FaUser,
   FaExternalLinkAlt,
   FaUserCircle,
+  FaGraduationCap,
+  FaBriefcase,
+  FaAward,
+  FaCertificate,
 } from "react-icons/fa";
 
 const fadeInUp = keyframes`
@@ -360,6 +365,110 @@ const ProfileIcon = styled(FaUserCircle)`
   color: ${theme.colors.primary};
 `;
 
+const ResumeContainer = styled.div`
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 1.5rem;
+  color: ${theme.colors.primary};
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ProfileSection = styled.div`
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+`;
+
+const ProfileInfo = styled.div`
+  flex: 1;
+`;
+
+const ProfileName = styled.h1`
+  font-size: 2rem;
+  color: ${theme.colors.text};
+  margin-bottom: 8px;
+`;
+
+const ProfileContact = styled.div`
+  color: ${theme.colors.textSecondary};
+  margin-bottom: 16px;
+`;
+
+const ProfileLinks = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+`;
+
+const ProfileLink = styled.a`
+  color: ${theme.colors.primary};
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${theme.colors.secondary};
+  }
+`;
+
+const ExperienceList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const ExperienceItem = styled.div`
+  padding: 16px;
+  border: 1px solid ${theme.colors.border};
+  border-radius: 8px;
+`;
+
+const ExperienceHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+`;
+
+const ExperienceTitle = styled.h3`
+  font-size: 1.2rem;
+  color: ${theme.colors.text};
+`;
+
+const ExperienceDate = styled.span`
+  color: ${theme.colors.textSecondary};
+`;
+
+const ExperienceDescription = styled.p`
+  color: ${theme.colors.text};
+  line-height: 1.6;
+`;
+
+const TechStack = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+`;
+
+const TechTag = styled.span`
+  background-color: ${theme.colors.primary}20;
+  color: ${theme.colors.primary};
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+`;
+
 const getBadgeIcon = (type) => {
   switch (type) {
     case "grand":
@@ -397,211 +506,29 @@ const getBadgeText = (type) => {
 const CompanyServicePage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedFilter, setSelectedFilter] = useState("recent");
+  const [resumeData, setResumeData] = useState(null);
 
-  const categories = [
-    "all",
-    "UI/UX",
-    "데이터분석",
-    "앱개발",
-    "프론트엔드",
-    "백엔드",
-    "클라우드 엔지니어링",
-    "그로스 마케터",
-    "블록체인",
-  ];
+  useEffect(() => {
+    const fetchResume = async () => {
+      try {
+        const response = await apis.getResume();
+        if (response.status === 200) {
+          setResumeData(response.data);
+        }
+      } catch (error) {
+        console.error("이력서 조회 에러:", error);
+      }
+    };
 
-  const filters = ["recent", "popular", "recommended"];
+    fetchResume();
+  }, []);
 
-  const students = [
-    {
-      id: 1,
-      name: "김수료",
-      profileImage: "https://randomuser.me/api/portraits/women/1.jpg",
-      course: "KDT 프론트엔드 1기",
-      school: "서울대학교",
-      skills: ["React", "JavaScript", "HTML", "CSS", "TypeScript", "Next.js"],
-      portfolio: "https://example.com/portfolio",
-      badges: ["grand", "tutor"],
-      projects: [
-        {
-          title: "쇼핑몰 웹사이트",
-          description: "React와 Node.js를 사용한 풀스택 프로젝트",
-          image: "https://via.placeholder.com/300x169",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "이개발",
-      profileImage: "https://randomuser.me/api/portraits/men/2.jpg",
-      course: "KDT 백엔드 2기",
-      school: "연세대학교",
-      skills: ["Java", "Spring Boot", "MySQL", "Docker", "AWS"],
-      portfolio: "https://example.com/portfolio2",
-      badges: ["excellent", "attendance"],
-      projects: [
-        {
-          title: "API 게이트웨이 서비스",
-          description: "Spring Cloud Gateway를 활용한 마이크로서비스 아키텍처",
-          image: "https://via.placeholder.com/300x169",
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "박디자인",
-      profileImage: "https://randomuser.me/api/portraits/women/3.jpg",
-      course: "KDT UI/UX 1기",
-      school: "고려대학교",
-      skills: [
-        "Figma",
-        "Adobe XD",
-        "Photoshop",
-        "Illustrator",
-        "After Effects",
-      ],
-      portfolio: "https://example.com/portfolio3",
-      badges: ["good", "tutor"],
-      projects: [
-        {
-          title: "모바일 앱 UI/UX 리디자인",
-          description: "사용자 경험 개선을 위한 앱 리디자인 프로젝트",
-          image: "https://via.placeholder.com/300x200",
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: "정데이터",
-      profileImage: "https://randomuser.me/api/portraits/men/4.jpg",
-      course: "KDT 데이터분석 2기",
-      school: "한양대학교",
-      skills: ["Python", "Pandas", "TensorFlow", "SQL", "Tableau"],
-      portfolio: "https://example.com/portfolio4",
-      badges: ["grand", "excellent"],
-      projects: [
-        {
-          title: "고객 행동 예측 모델",
-          description: "머신러닝을 활용한 고객 구매 패턴 분석",
-          image: "https://via.placeholder.com/300x200",
-        },
-      ],
-    },
-    {
-      id: 5,
-      name: "최앱개발",
-      profileImage: "https://randomuser.me/api/portraits/women/5.jpg",
-      course: "KDT 앱개발 1기",
-      school: "성균관대학교",
-      skills: ["React Native", "Flutter", "Firebase", "Redux", "GraphQL"],
-      portfolio: "https://example.com/portfolio5",
-      badges: ["excellent", "attendance"],
-      projects: [
-        {
-          title: "헬스케어 모바일 앱",
-          description: "React Native로 개발한 건강 관리 앱",
-          image: "https://via.placeholder.com/300x200",
-        },
-      ],
-    },
-    {
-      id: 6,
-      name: "강클라우드",
-      profileImage: "https://randomuser.me/api/portraits/men/6.jpg",
-      course: "KDT 클라우드 엔지니어링 1기",
-      school: "경희대학교",
-      skills: ["AWS", "Kubernetes", "Terraform", "Docker", "CI/CD"],
-      portfolio: "https://example.com/portfolio6",
-      badges: ["good", "tutor"],
-      projects: [
-        {
-          title: "클라우드 인프라 구축",
-          description: "AWS를 활용한 마이크로서비스 아키텍처 구축",
-          image: "https://via.placeholder.com/300x200",
-        },
-      ],
-    },
-    {
-      id: 7,
-      name: "윤마케터",
-      profileImage: "https://randomuser.me/api/portraits/women/7.jpg",
-      course: "KDT 그로스 마케터 1기",
-      school: "서강대학교",
-      skills: [
-        "Google Analytics",
-        "SEO",
-        "Content Marketing",
-        "Social Media",
-        "Data Analysis",
-      ],
-      portfolio: "https://example.com/portfolio7",
-      badges: ["excellent", "attendance"],
-      projects: [
-        {
-          title: "바이럴 마케팅 캠페인",
-          description: "소셜 미디어를 활용한 성공적인 마케팅 캠페인",
-          image: "https://via.placeholder.com/300x200",
-        },
-      ],
-    },
-    {
-      id: 8,
-      name: "장블록체인",
-      profileImage: "https://randomuser.me/api/portraits/men/8.jpg",
-      course: "KDT 블록체인 1기",
-      school: "숭실대학교",
-      skills: ["Solidity", "Ethereum", "Web3.js", "Smart Contracts", "DeFi"],
-      portfolio: "https://example.com/portfolio8",
-      badges: ["grand", "tutor"],
-      projects: [
-        {
-          title: "NFT 마켓플레이스",
-          description: "이더리움 기반 NFT 거래 플랫폼",
-          image: "https://via.placeholder.com/300x200",
-        },
-      ],
-    },
-    {
-      id: 9,
-      name: "한프론트",
-      profileImage: "https://randomuser.me/api/portraits/women/9.jpg",
-      course: "KDT 프론트엔드 2기",
-      school: "홍익대학교",
-      skills: ["Vue.js", "Nuxt.js", "Tailwind CSS", "GraphQL", "Jest"],
-      portfolio: "https://example.com/portfolio9",
-      badges: ["good", "attendance"],
-      projects: [
-        {
-          title: "실시간 채팅 웹앱",
-          description: "Vue.js와 Socket.io를 활용한 실시간 채팅 서비스",
-          image: "https://via.placeholder.com/300x200",
-        },
-      ],
-    },
-    {
-      id: 10,
-      name: "서백엔드",
-      profileImage: "https://randomuser.me/api/portraits/men/10.jpg",
-      course: "KDT 백엔드 1기",
-      school: "중앙대학교",
-      skills: ["Node.js", "Express", "MongoDB", "Redis", "GraphQL"],
-      portfolio: "https://example.com/portfolio10",
-      badges: ["excellent", "tutor"],
-      projects: [
-        {
-          title: "실시간 알림 시스템",
-          description: "WebSocket을 활용한 실시간 알림 서비스",
-          image: "https://via.placeholder.com/300x169",
-        },
-      ],
-    },
-  ];
+  if (!resumeData) {
+    return <div>로딩중...</div>;
+  }
 
-  const handleConnect = (studentId) => {
-    alert(`학생 ID ${studentId}에게 연락처 공유 요청이 전송되었습니다.`);
-  };
-
-  const filteredStudents = students;
+  const { user, work_experiences, projects, education, awards, certificates } =
+    resumeData;
 
   return (
     <Container>
@@ -617,7 +544,17 @@ const CompanyServicePage = () => {
       <FilterContainer>
         <FilterGroup>
           <FilterLabel>카테고리:</FilterLabel>
-          {categories.map((category) => (
+          {[
+            "all",
+            "UI/UX",
+            "데이터분석",
+            "앱개발",
+            "프론트엔드",
+            "백엔드",
+            "클라우드 엔지니어링",
+            "그로스 마케터",
+            "블록체인",
+          ].map((category) => (
             <FilterButton
               key={category}
               active={selectedCategory === category}
@@ -629,7 +566,7 @@ const CompanyServicePage = () => {
         </FilterGroup>
         <FilterGroup>
           <FilterLabel>정렬:</FilterLabel>
-          {filters.map((filter) => (
+          {["recent", "popular", "recommended"].map((filter) => (
             <FilterButton
               key={filter}
               active={selectedFilter === filter}
@@ -645,81 +582,190 @@ const CompanyServicePage = () => {
         </FilterGroup>
       </FilterContainer>
 
-      <StudentGrid>
-        {filteredStudents.map((student, index) => (
-          <StudentCard
-            key={student.id}
-            style={{ animationDelay: `${index * 0.05}s` }}
-          >
-            <StudentProfile>
-              <ProfileIconContainer>
-                {student.profileImage ? (
-                  <img
-                    src={student.profileImage}
-                    alt={`${student.name} 프로필`}
-                  />
-                ) : (
-                  <ProfileIcon />
-                )}
-              </ProfileIconContainer>
-              <div>
-                <StudentName>{student.name}</StudentName>
-                <StudentInfo>{student.school}</StudentInfo>
-                <StudentInfo>{student.course}</StudentInfo>
-              </div>
-            </StudentProfile>
+      <ResumeContainer>
+        <ProfileSection>
+          <ProfileIconContainer>
+            <FaUserCircle size={80} color={theme.colors.primary} />
+          </ProfileIconContainer>
+          <ProfileInfo>
+            <ProfileName>{user.name}</ProfileName>
+            <ProfileContact>
+              <div>{user.email}</div>
+              <div>{user.phone}</div>
+            </ProfileContact>
+            <p>{user.introduction}</p>
+            <ProfileLinks>
+              {user.portfolio && (
+                <ProfileLink
+                  href={user.portfolio}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaExternalLinkAlt /> 포트폴리오
+                </ProfileLink>
+              )}
+              {user.blog && (
+                <ProfileLink
+                  href={user.blog}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaExternalLinkAlt /> 블로그
+                </ProfileLink>
+              )}
+              {user.github && (
+                <ProfileLink
+                  href={user.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaExternalLinkAlt /> GitHub
+                </ProfileLink>
+              )}
+            </ProfileLinks>
+          </ProfileInfo>
+        </ProfileSection>
 
-            {student.badges && student.badges.length > 0 && (
-              <>
-                <Skills>
-                  {student.badges.map((badge, index) => (
-                    <Badge key={index} type={badge}>
-                      {getBadgeIcon(badge)}
-                      {getBadgeText(badge)}
-                    </Badge>
-                  ))}
-                </Skills>
-                <SectionDivider />
-              </>
-            )}
-
-            <Skills>
-              {student.skills.map((skill) => (
-                <SkillTag key={skill}>{skill}</SkillTag>
+        {work_experiences.length > 0 && (
+          <>
+            <SectionTitle>
+              <FaBriefcase /> 경력
+            </SectionTitle>
+            <ExperienceList>
+              {work_experiences.map((exp) => (
+                <ExperienceItem key={exp.id}>
+                  <ExperienceHeader>
+                    <ExperienceTitle>
+                      {exp.company} - {exp.position}
+                    </ExperienceTitle>
+                    <ExperienceDate>
+                      {new Date(exp.start_date).toLocaleDateString()} -{" "}
+                      {exp.is_current
+                        ? "현재"
+                        : new Date(exp.end_date).toLocaleDateString()}
+                    </ExperienceDate>
+                  </ExperienceHeader>
+                  <ExperienceDescription>
+                    {exp.description}
+                  </ExperienceDescription>
+                </ExperienceItem>
               ))}
-            </Skills>
+            </ExperienceList>
+          </>
+        )}
 
-            {student.projects && student.projects.length > 0 && (
-              <>
-                <SectionDivider />
-                {student.projects.map((project, index) => (
-                  <PortfolioPreview key={index}>
-                    <ProjectTitle>{project.title}</ProjectTitle>
-                    <ProjectDescription>
-                      {project.description}
-                    </ProjectDescription>
-                    {project.image && (
-                      <ProjectImage src={project.image} alt={project.title} />
-                    )}
-                  </PortfolioPreview>
-                ))}
-              </>
-            )}
+        {projects.length > 0 && (
+          <>
+            <SectionTitle>
+              <FaStar /> 프로젝트
+            </SectionTitle>
+            <ExperienceList>
+              {projects.map((project) => (
+                <ExperienceItem key={project.id}>
+                  <ExperienceHeader>
+                    <ExperienceTitle>{project.title}</ExperienceTitle>
+                    <ExperienceDate>
+                      {new Date(project.start_date).toLocaleDateString()} -{" "}
+                      {new Date(project.end_date).toLocaleDateString()}
+                    </ExperienceDate>
+                  </ExperienceHeader>
+                  <ExperienceDescription>
+                    {project.description}
+                  </ExperienceDescription>
+                  {project.tech_stack && (
+                    <TechStack>
+                      {project.tech_stack.map((tech, index) => (
+                        <TechTag key={index}>{tech}</TechTag>
+                      ))}
+                    </TechStack>
+                  )}
+                  {project.portfolio_url && (
+                    <ProfileLink
+                      href={project.portfolio_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaExternalLinkAlt /> 프로젝트 링크
+                    </ProfileLink>
+                  )}
+                </ExperienceItem>
+              ))}
+            </ExperienceList>
+          </>
+        )}
 
-            <PortfolioLink
-              href={student.portfolio}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              전체 포트폴리오 보기 <FaExternalLinkAlt size="0.8em" />
-            </PortfolioLink>
+        {education.length > 0 && (
+          <>
+            <SectionTitle>
+              <FaGraduationCap /> 학력
+            </SectionTitle>
+            <ExperienceList>
+              {education.map((edu) => (
+                <ExperienceItem key={edu.id}>
+                  <ExperienceHeader>
+                    <ExperienceTitle>
+                      {edu.school} - {edu.major}
+                    </ExperienceTitle>
+                    <ExperienceDate>
+                      {new Date(edu.start_date).toLocaleDateString()} -{" "}
+                      {new Date(edu.end_date).toLocaleDateString()}
+                    </ExperienceDate>
+                  </ExperienceHeader>
+                  <div>{edu.degree}</div>
+                </ExperienceItem>
+              ))}
+            </ExperienceList>
+          </>
+        )}
 
-            <ConnectButton onClick={() => handleConnect(student.id)}>
-              🚀 커넥트 요청
-            </ConnectButton>
-          </StudentCard>
-        ))}
-      </StudentGrid>
+        {awards.length > 0 && (
+          <>
+            <SectionTitle>
+              <FaAward /> 수상
+            </SectionTitle>
+            <ExperienceList>
+              {awards.map((award) => (
+                <ExperienceItem key={award.id}>
+                  <ExperienceHeader>
+                    <ExperienceTitle>{award.title}</ExperienceTitle>
+                    <ExperienceDate>
+                      {new Date(award.start_date).toLocaleDateString()} -{" "}
+                      {new Date(award.end_date).toLocaleDateString()}
+                    </ExperienceDate>
+                  </ExperienceHeader>
+                  <ExperienceDescription>
+                    {award.description}
+                  </ExperienceDescription>
+                </ExperienceItem>
+              ))}
+            </ExperienceList>
+          </>
+        )}
+
+        {certificates.length > 0 && (
+          <>
+            <SectionTitle>
+              <FaCertificate /> 자격증
+            </SectionTitle>
+            <ExperienceList>
+              {certificates.map((cert) => (
+                <ExperienceItem key={cert.id}>
+                  <ExperienceHeader>
+                    <ExperienceTitle>{cert.title}</ExperienceTitle>
+                    <ExperienceDate>
+                      {new Date(cert.issue_date).toLocaleDateString()}
+                    </ExperienceDate>
+                  </ExperienceHeader>
+                  <div>{cert.organization}</div>
+                  {cert.credential_id && (
+                    <div>자격증 번호: {cert.credential_id}</div>
+                  )}
+                </ExperienceItem>
+              ))}
+            </ExperienceList>
+          </>
+        )}
+      </ResumeContainer>
     </Container>
   );
 };

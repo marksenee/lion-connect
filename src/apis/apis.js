@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "../utils/auth";
 
 export const api = axios.create({
   baseURL: "https://lion-connect-backend.onrender.com", //실서버
@@ -8,6 +9,22 @@ export const api = axios.create({
   },
   withCredentials: true,
 });
+
+// 요청 인터셉터 추가
+api.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    console.log("인터셉터에서 가져온 토큰:", token);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log("설정된 헤더:", config.headers);
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const apis = {
   // 로그인
@@ -39,6 +56,27 @@ export const apis = {
   postProject: async (data) => {
     try {
       const response = await api.post("/user/project", data);
+      return response;
+    } catch (error) {
+      return error.response;
+    }
+  },
+
+  // 이력서 저장
+  postResume: async (data) => {
+    try {
+      const response = await api.post("/user/resume", data);
+      return response;
+    } catch (error) {
+      return error.response;
+    }
+  },
+
+  // 이력서 조회
+  getResume: async () => {
+    try {
+      const response = await api.get("/user/profile");
+      console.log(response);
       return response;
     } catch (error) {
       return error.response;

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apis } from "../apis/apis";
+import { setToken } from "../utils/auth";
 
 const Container = styled.div`
   max-width: 420px;
@@ -270,6 +271,7 @@ const HelperLink = styled(Link)`
 `;
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -295,8 +297,11 @@ const LoginPage = () => {
       });
 
       if (response.status === 200) {
+        console.log("로그인 응답:", response);
+        console.log("저장되는 토큰:", response.data.access_token);
+        setToken(response.data.access_token);
         alert("로그인이 완료되었습니다.");
-        // navigate("/login");
+        navigate("/company-service");
       } else {
         alert("아이디와 비밀번호를 다시 확인해주세요");
       }
