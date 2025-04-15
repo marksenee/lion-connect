@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { apis } from "../apis/apis";
 
 const Container = styled.div`
   max-width: 500px;
@@ -173,6 +174,7 @@ const BackLink = styled(Link)`
 `;
 
 const StudentSignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -192,10 +194,36 @@ const StudentSignupPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: 회원가입 로직 구현
-    console.log(formData);
+
+    // 비밀번호 확인
+    if (formData.password !== formData.confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      const response = await apis.postSignUp({
+        ...formData,
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        user_type: formData.user_type,
+        skills: formData.skills,
+        course: formData.course,
+      });
+
+      if (response.status === 201) {
+        alert("회원가입이 완료되었습니다.");
+        navigate("/login");
+      } else {
+        alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (error) {
+      console.error("회원가입 에러:", error);
+      alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -293,29 +321,6 @@ const StudentSignupPage = () => {
           />
           <HelperText>쉼표로 구분하여 입력해주세요.</HelperText>
         </InputGroup>
-
-        <InputGroup>
-          <Label>포트폴리오 링크</Label>
-          <Input
-            type="url"
-            name="portfolio"
-            value={formData.portfolio}
-            onChange={handleChange}
-            placeholder="https://"
-          />
-        </InputGroup>
-
-        <InputGroup>
-          <Label>자기소개</Label>
-          <TextArea
-            name="introduction"
-            value={formData.introduction}
-            onChange={handleChange}
-            placeholder="자신을 표현하는 간단한 소개를 작성해주세요"
-            required
-          />
-        </InputGroup>
-
         <Button type="submit">
           <span>회원가입 완료</span>
         </Button>

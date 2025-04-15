@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
 import { Link } from "react-router-dom";
+import { apis } from "../apis/apis";
 
 const Container = styled.div`
   max-width: 420px;
@@ -283,10 +284,26 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: 로그인 로직 구현
-    console.log(formData);
+
+    try {
+      const response = await apis.postLogin({
+        ...formData,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 200) {
+        alert("로그인이 완료되었습니다.");
+        // navigate("/login");
+      } else {
+        alert("아이디와 비밀번호를 다시 확인해주세요");
+      }
+    } catch (error) {
+      console.error("로그인 에러:", error);
+      alert("아이디와 비밀번호를 다시 확인해주세요");
+    }
   };
 
   return (

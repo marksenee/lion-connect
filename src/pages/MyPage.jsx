@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
-import ResumeForm from "../components/ResumeForm";
+import ResumeForm from "../components/resume/ResumeForm";
 
 const Container = styled.div`
   max-width: 1200px;

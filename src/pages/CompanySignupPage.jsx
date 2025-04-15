@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { apis } from "../apis/apis";
 
 const Container = styled.div`
   max-width: 500px;
@@ -170,6 +171,7 @@ const BackLink = styled(Link)`
 `;
 
 const CompanySignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     companyName: "",
     email: "",
@@ -179,6 +181,7 @@ const CompanySignupPage = () => {
     companySize: "",
     website: "",
     description: "",
+    userType: "company",
   });
 
   const handleChange = (e) => {
@@ -189,10 +192,34 @@ const CompanySignupPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: 회원가입 로직 구현
-    console.log(formData);
+
+    // 비밀번호 확인
+    if (formData.password !== formData.confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      const response = await apis.postSignUp({
+        ...formData,
+        company_name: formData.companyName,
+        company_description: formData.description,
+        company_size: formData.companySize,
+        company_website: formData.website,
+      });
+
+      if (response.status === 201) {
+        alert("회원가입이 완료되었습니다.");
+        navigate("/login");
+      } else {
+        alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (error) {
+      console.error("회원가입 에러:", error);
+      alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
