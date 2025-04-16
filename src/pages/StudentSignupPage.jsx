@@ -205,25 +205,46 @@ const StudentSignupPage = () => {
     }
 
     try {
-      const response = await userApis.postSignUp({
-        ...formData,
+      // 필요한 필드만 추출하고 userType을 명시적으로 추가
+      const payload = {
         email: formData.email,
         password: formData.password,
         name: formData.name,
-        user_type: formData.user_type,
-        skills: formData.skills,
+        userType: "student", // 'user_type' 대신 'userType'으로, 값은 'student'
+        skills: formData.skills, // skills는 문자열 형태이므로 필요시 배열로 변환해야 할 수 있습니다. API 스펙 확인 필요.
         course: formData.course,
-      });
+        // portfolio: formData.portfolio, // 필요한 경우 추가
+        // introduction: formData.introduction, // 필요한 경우 추가
+      };
 
-      if (response.status === 201) {
+      // skills 필드가 콤마로 구분된 문자열이라면 배열로 변환
+      if (typeof payload.skills === "string") {
+        payload.skills = payload.skills
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s);
+      }
+
+      const response = await userApis.postSignUp(payload); // 수정된 payload 전달
+
+      if (response && response.status === 201) {
+        // 성공 상태 코드 확인 (보통 201 Created)
         alert("회원가입이 완료되었습니다.");
         navigate("/login");
       } else {
-        alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+        // 서버에서 구체적인 에러 메시지를 보내준다면 표시하는 것이 좋습니다.
+        const errorMessage =
+          response?.data?.message ||
+          "회원가입에 실패했습니다. 입력값을 확인해주세요.";
+        alert(errorMessage);
       }
     } catch (error) {
-      console.error("회원가입 에러:", error);
-      alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+      console.error("회원가입 에러:", error.response || error); // 에러 응답 상세 내용 확인
+      // 네트워크 에러 또는 서버 응답 에러 구분
+      const message =
+        error.response?.data?.message ||
+        "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.";
+      alert(message);
     }
   };
 

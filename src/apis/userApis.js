@@ -26,11 +26,12 @@ export const userApis = {
 
   // 회원가입
   postSignUp: async (data) => {
+    console.log("2.전송되는데이터", data);
     try {
       const response = await userApi.post("/auth/signup", {
         ...data,
-        user_type: data.userType, // userType을 user_type으로 변환
-        name: data.userType === "company" ? data.companyName : data.name, // 기업의 경우 companyName을 name으로 사용
+        user_type: data.userType, // 🚨 문제 발생 지점 2: 입력받은 data 객체에서 'userType'(camelCase)을 찾아서 'user_type'(snake_case)으로 변환
+        name: data.userType === "company" ? data.companyName : data.name, // userType 값에 따라 name 필드를 다르게 처리
       });
       return response;
     } catch (error) {
