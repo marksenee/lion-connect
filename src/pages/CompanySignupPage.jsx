@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { theme } from "../styles/theme";
 import { Link, useNavigate } from "react-router-dom";
 import { apis } from "../apis/apis";
+import { userApis } from "../apis/userApis";
 
 const Container = styled.div`
   max-width: 500px;
@@ -202,7 +203,7 @@ const CompanySignupPage = () => {
     }
 
     try {
-      const response = await apis.postSignUp({
+      const response = await userApis.postSignUp({
         ...formData,
         company_name: formData.companyName,
         company_description: formData.description,
@@ -210,7 +211,7 @@ const CompanySignupPage = () => {
         company_website: formData.website,
       });
 
-      if (response.status === 201) {
+      if (response && response.status === 201) {
         alert("회원가입이 완료되었습니다.");
         navigate("/login");
       } else {
@@ -218,7 +219,7 @@ const CompanySignupPage = () => {
       }
     } catch (error) {
       console.error("회원가입 에러:", error);
-      alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+      alert("서버와의 통신 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   };
 

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { theme } from "../styles/theme";
 import { Link, useNavigate } from "react-router-dom";
 import { apis } from "../apis/apis";
+import { userApis } from "../apis/userApis";
 
 const Container = styled.div`
   max-width: 500px;
@@ -204,7 +205,7 @@ const StudentSignupPage = () => {
     }
 
     try {
-      const response = await apis.postSignUp({
+      const response = await userApis.postSignUp({
         ...formData,
         email: formData.email,
         password: formData.password,

@@ -14,10 +14,8 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = getToken();
-    console.log("인터셉터에서 가져온 토큰:", token);
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log("설정된 헤더:", config.headers);
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
@@ -26,14 +24,24 @@ api.interceptors.request.use(
   }
 );
 
+// api.interceptors.request.use(function (config) {
+//   const token = getToken();
+//   if (token) {
+//     config.headers["Authorization"] = token;
+//   }
+//   return config;
+// });
+
 export const apis = {
   // 로그인
   postLogin: async (data) => {
     try {
+      console.log("로그인 요청 데이터:", data);
       const response = await api.post("/auth/login", data);
-      console.log(response);
+      console.log("로그인 응답:", response);
       return response;
     } catch (error) {
+      console.error("로그인 에러 상세:", error.response);
       return error.response;
     }
   },
@@ -75,10 +83,12 @@ export const apis = {
   // 이력서 조회
   getResume: async () => {
     try {
+      console.log("이력서 조회 요청 시작");
       const response = await api.get("/user/profile");
-      console.log(response);
+      console.log("이력서 조회 응답:", response);
       return response;
     } catch (error) {
+      console.error("이력서 조회 에러:", error);
       return error.response;
     }
   },

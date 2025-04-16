@@ -512,11 +512,15 @@ const CompanyServicePage = () => {
     const fetchResume = async () => {
       try {
         const response = await apis.getResume();
-        if (response.status === 200) {
+        if (response && response.status === 200) {
           setResumeData(response.data);
+        } else {
+          console.error("이력서 조회 실패:", response);
+          setResumeData(null);
         }
       } catch (error) {
         console.error("이력서 조회 에러:", error);
+        setResumeData(null);
       }
     };
 
@@ -527,8 +531,27 @@ const CompanyServicePage = () => {
     return <div>로딩중...</div>;
   }
 
-  const { user, work_experiences, projects, education, awards, certificates } =
-    resumeData;
+  const handleConnect = (studentId) => {
+    alert(`학생 ID ${studentId}에게 연락처 공유 요청이 전송되었습니다.`);
+  };
+
+  // 백엔드 데이터를 StudentCard 형식에 맞게 변환
+  const transformedData = {
+    id: resumeData.user.id,
+    name: resumeData.user.name,
+    profileImage: resumeData.user.profile_image,
+    course: resumeData.user.course,
+    school: resumeData.education?.[0]?.school,
+    skills: resumeData.user.skills || [],
+    portfolio: resumeData.user.portfolio,
+    badges: [], // 백엔드 데이터에서 적절한 뱃지 정보 매핑 필요
+    projects:
+      resumeData.projects?.map((project) => ({
+        title: project.title,
+        description: project.description,
+        image: project.image,
+      })) || [],
+  };
 
   return (
     <Container>
@@ -582,190 +605,76 @@ const CompanyServicePage = () => {
         </FilterGroup>
       </FilterContainer>
 
-      <ResumeContainer>
-        <ProfileSection>
-          <ProfileIconContainer>
-            <FaUserCircle size={80} color={theme.colors.primary} />
-          </ProfileIconContainer>
-          <ProfileInfo>
-            <ProfileName>{user.name}</ProfileName>
-            <ProfileContact>
-              <div>{user.email}</div>
-              <div>{user.phone}</div>
-            </ProfileContact>
-            <p>{user.introduction}</p>
-            <ProfileLinks>
-              {user.portfolio && (
-                <ProfileLink
-                  href={user.portfolio}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaExternalLinkAlt /> 포트폴리오
-                </ProfileLink>
+      <StudentGrid>
+        <StudentCard>
+          <StudentProfile>
+            <ProfileIconContainer>
+              {transformedData.profileImage ? (
+                <img
+                  src={transformedData.profileImage}
+                  alt={`${transformedData.name} 프로필`}
+                />
+              ) : (
+                <ProfileIcon />
               )}
-              {user.blog && (
-                <ProfileLink
-                  href={user.blog}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaExternalLinkAlt /> 블로그
-                </ProfileLink>
-              )}
-              {user.github && (
-                <ProfileLink
-                  href={user.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaExternalLinkAlt /> GitHub
-                </ProfileLink>
-              )}
-            </ProfileLinks>
-          </ProfileInfo>
-        </ProfileSection>
+            </ProfileIconContainer>
+            <div>
+              <StudentName>{transformedData.name}</StudentName>
+              <StudentInfo>{transformedData.school}</StudentInfo>
+              <StudentInfo>{transformedData.course}</StudentInfo>
+            </div>
+          </StudentProfile>
 
-        {work_experiences.length > 0 && (
-          <>
-            <SectionTitle>
-              <FaBriefcase /> 경력
-            </SectionTitle>
-            <ExperienceList>
-              {work_experiences.map((exp) => (
-                <ExperienceItem key={exp.id}>
-                  <ExperienceHeader>
-                    <ExperienceTitle>
-                      {exp.company} - {exp.position}
-                    </ExperienceTitle>
-                    <ExperienceDate>
-                      {new Date(exp.start_date).toLocaleDateString()} -{" "}
-                      {exp.is_current
-                        ? "현재"
-                        : new Date(exp.end_date).toLocaleDateString()}
-                    </ExperienceDate>
-                  </ExperienceHeader>
-                  <ExperienceDescription>
-                    {exp.description}
-                  </ExperienceDescription>
-                </ExperienceItem>
-              ))}
-            </ExperienceList>
-          </>
-        )}
+          {transformedData.badges && transformedData.badges.length > 0 && (
+            <>
+              <Skills>
+                {transformedData.badges.map((badge, index) => (
+                  <Badge key={index} type={badge}>
+                    {getBadgeIcon(badge)}
+                    {getBadgeText(badge)}
+                  </Badge>
+                ))}
+              </Skills>
+              <SectionDivider />
+            </>
+          )}
 
-        {projects.length > 0 && (
-          <>
-            <SectionTitle>
-              <FaStar /> 프로젝트
-            </SectionTitle>
-            <ExperienceList>
-              {projects.map((project) => (
-                <ExperienceItem key={project.id}>
-                  <ExperienceHeader>
-                    <ExperienceTitle>{project.title}</ExperienceTitle>
-                    <ExperienceDate>
-                      {new Date(project.start_date).toLocaleDateString()} -{" "}
-                      {new Date(project.end_date).toLocaleDateString()}
-                    </ExperienceDate>
-                  </ExperienceHeader>
-                  <ExperienceDescription>
-                    {project.description}
-                  </ExperienceDescription>
-                  {project.tech_stack && (
-                    <TechStack>
-                      {project.tech_stack.map((tech, index) => (
-                        <TechTag key={index}>{tech}</TechTag>
-                      ))}
-                    </TechStack>
+          <Skills>
+            {transformedData.skills.map((skill) => (
+              <SkillTag key={skill}>{skill}</SkillTag>
+            ))}
+          </Skills>
+
+          {transformedData.projects && transformedData.projects.length > 0 && (
+            <>
+              <SectionDivider />
+              {transformedData.projects.map((project, index) => (
+                <PortfolioPreview key={index}>
+                  <ProjectTitle>{project.title}</ProjectTitle>
+                  <ProjectDescription>{project.description}</ProjectDescription>
+                  {project.image && (
+                    <ProjectImage src={project.image} alt={project.title} />
                   )}
-                  {project.portfolio_url && (
-                    <ProfileLink
-                      href={project.portfolio_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FaExternalLinkAlt /> 프로젝트 링크
-                    </ProfileLink>
-                  )}
-                </ExperienceItem>
+                </PortfolioPreview>
               ))}
-            </ExperienceList>
-          </>
-        )}
+            </>
+          )}
 
-        {education.length > 0 && (
-          <>
-            <SectionTitle>
-              <FaGraduationCap /> 학력
-            </SectionTitle>
-            <ExperienceList>
-              {education.map((edu) => (
-                <ExperienceItem key={edu.id}>
-                  <ExperienceHeader>
-                    <ExperienceTitle>
-                      {edu.school} - {edu.major}
-                    </ExperienceTitle>
-                    <ExperienceDate>
-                      {new Date(edu.start_date).toLocaleDateString()} -{" "}
-                      {new Date(edu.end_date).toLocaleDateString()}
-                    </ExperienceDate>
-                  </ExperienceHeader>
-                  <div>{edu.degree}</div>
-                </ExperienceItem>
-              ))}
-            </ExperienceList>
-          </>
-        )}
+          {transformedData.portfolio && (
+            <PortfolioLink
+              href={transformedData.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              전체 포트폴리오 보기 <FaExternalLinkAlt size="0.8em" />
+            </PortfolioLink>
+          )}
 
-        {awards.length > 0 && (
-          <>
-            <SectionTitle>
-              <FaAward /> 수상
-            </SectionTitle>
-            <ExperienceList>
-              {awards.map((award) => (
-                <ExperienceItem key={award.id}>
-                  <ExperienceHeader>
-                    <ExperienceTitle>{award.title}</ExperienceTitle>
-                    <ExperienceDate>
-                      {new Date(award.start_date).toLocaleDateString()} -{" "}
-                      {new Date(award.end_date).toLocaleDateString()}
-                    </ExperienceDate>
-                  </ExperienceHeader>
-                  <ExperienceDescription>
-                    {award.description}
-                  </ExperienceDescription>
-                </ExperienceItem>
-              ))}
-            </ExperienceList>
-          </>
-        )}
-
-        {certificates.length > 0 && (
-          <>
-            <SectionTitle>
-              <FaCertificate /> 자격증
-            </SectionTitle>
-            <ExperienceList>
-              {certificates.map((cert) => (
-                <ExperienceItem key={cert.id}>
-                  <ExperienceHeader>
-                    <ExperienceTitle>{cert.title}</ExperienceTitle>
-                    <ExperienceDate>
-                      {new Date(cert.issue_date).toLocaleDateString()}
-                    </ExperienceDate>
-                  </ExperienceHeader>
-                  <div>{cert.organization}</div>
-                  {cert.credential_id && (
-                    <div>자격증 번호: {cert.credential_id}</div>
-                  )}
-                </ExperienceItem>
-              ))}
-            </ExperienceList>
-          </>
-        )}
-      </ResumeContainer>
+          <ConnectButton onClick={() => handleConnect(transformedData.id)}>
+            🚀 커넥트 요청
+          </ConnectButton>
+        </StudentCard>
+      </StudentGrid>
     </Container>
   );
 };

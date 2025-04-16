@@ -4,6 +4,7 @@ import { theme } from "../styles/theme";
 import { Link, useNavigate } from "react-router-dom";
 import { apis } from "../apis/apis";
 import { setToken } from "../utils/auth";
+import { userApis } from "../apis/userApis";
 
 const Container = styled.div`
   max-width: 420px;
@@ -290,13 +291,13 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await apis.postLogin({
+      const response = await userApis.postLogin({
         ...formData,
         email: formData.email,
         password: formData.password,
       });
 
-      if (response.status === 200) {
+      if (response && response.status === 200) {
         console.log("로그인 응답:", response);
         console.log("저장되는 토큰:", response.data.access_token);
         setToken(response.data.access_token);
@@ -307,7 +308,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error("로그인 에러:", error);
-      alert("아이디와 비밀번호를 다시 확인해주세요");
+      alert("서버와의 통신 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   };
 
