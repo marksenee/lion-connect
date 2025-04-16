@@ -537,13 +537,13 @@ const CompanyServicePage = () => {
 
   // 백엔드 데이터를 StudentCard 형식에 맞게 변환
   const transformedData = {
-    id: resumeData.user.id,
-    name: resumeData.user.name,
-    profileImage: resumeData.user.profile_image,
-    course: resumeData.user.course,
+    id: resumeData.id,
+    name: resumeData.name,
+    profileImage: resumeData.profile_image,
+    course: resumeData.course,
     school: resumeData.education?.[0]?.school,
-    skills: resumeData.user.skills || [],
-    portfolio: resumeData.user.portfolio,
+    skills: resumeData.skills || [],
+    portfolio: resumeData.portfolio,
     badges: [], // 백엔드 데이터에서 적절한 뱃지 정보 매핑 필요
     projects:
       resumeData.projects?.map((project) => ({

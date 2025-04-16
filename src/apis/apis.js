@@ -36,9 +36,7 @@ export const apis = {
   // 로그인
   postLogin: async (data) => {
     try {
-      console.log("로그인 요청 데이터:", data);
       const response = await api.post("/auth/login", data);
-      console.log("로그인 응답:", response);
       return response;
     } catch (error) {
       console.error("로그인 에러 상세:", error.response);
@@ -89,6 +87,16 @@ export const apis = {
       return response;
     } catch (error) {
       console.error("이력서 조회 에러:", error);
+      return error.response;
+    }
+  },
+
+  // 전체 수료생 프로필 조회
+  getStudentProfiles: async () => {
+    try {
+      const response = await api.get("/user/studentsprofile");
+      return response;
+    } catch (error) {
       return error.response;
     }
   },
