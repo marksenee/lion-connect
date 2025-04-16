@@ -14,9 +14,7 @@ export const userApis = {
   // 로그인
   postLogin: async (data) => {
     try {
-      console.log("로그인 요청 데이터:", data);
       const response = await userApi.post("/auth/login", data);
-      console.log("로그인 응답:", response);
       return response;
     } catch (error) {
       console.error("로그인 에러 상세:", error.response);

@@ -298,11 +298,11 @@ const LoginPage = () => {
       });
 
       if (response && response.status === 200) {
-        console.log("로그인 응답:", response);
-        console.log("저장되는 토큰:", response.data.access_token);
+        // console.log("로그인 응답:", response);
+        // console.log("저장되는 토큰:", response.data.access_token);
         setToken(response.data.access_token);
         alert("로그인이 완료되었습니다.");
-        navigate("/company-service");
+        navigate("/");
       } else {
         alert("아이디와 비밀번호를 다시 확인해주세요");
       }

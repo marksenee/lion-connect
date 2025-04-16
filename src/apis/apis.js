@@ -94,9 +94,7 @@ export const apis = {
   // 전체 수료생 프로필 조회
   getStudentProfiles: async () => {
     try {
-      console.log("수료생 프로필 조회 요청 시작");
       const response = await api.get("/user/studentsprofile");
-      console.log("수료생 프로필 조회 응답:", response);
       return response;
     } catch (error) {
       return error.response;

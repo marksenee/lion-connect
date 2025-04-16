@@ -511,14 +511,16 @@ const CompanyServicePage = () => {
   useEffect(() => {
     const fetchResume = async () => {
       try {
+        console.log("1");
         const response = await apis.getStudentProfiles();
+        console.log("2");
         if (
           response &&
           response.status === 200 &&
           Array.isArray(response.data) &&
           response.data.length > 0
         ) {
-          setResumeData(response.data[0]); // 첫 번째 학생 데이터만 사용
+          setResumeData(response.data); // 모든 학생 데이터를 저장
         } else {
           console.error("이력서 조회 실패:", response);
           setResumeData(null);
@@ -540,23 +542,23 @@ const CompanyServicePage = () => {
     alert(`학생 ID ${studentId}에게 연락처 공유 요청이 전송되었습니다.`);
   };
 
-  // 백엔드 데이터를 StudentCard 형식에 맞게 변환
-  const transformedData = {
-    id: resumeData.user.id,
-    name: resumeData.user.name,
-    profileImage: resumeData.user.profile_image,
-    course: resumeData.user.course,
-    school: resumeData.education?.[0]?.school,
-    skills: resumeData.user.skills || [],
-    portfolio: resumeData.user.portfolio,
+  // 모든 학생 데이터를 StudentCard 형식에 맞게 변환
+  const transformedData = resumeData.map((student) => ({
+    id: student.user.id,
+    name: student.user.name,
+    profileImage: student.user.profile_image,
+    course: student.user.course,
+    school: student.education?.[0]?.school,
+    skills: student.user.skills || [],
+    portfolio: student.user.portfolio,
     badges: [], // 백엔드 데이터에서 적절한 뱃지 정보 매핑 필요
     projects:
-      resumeData.projects?.map((project) => ({
+      student.projects?.map((project) => ({
         title: project.title,
         description: project.description,
-        image: project.image,
+        image: project.image_url,
       })) || [],
-  };
+  }));
 
   return (
     <Container>
@@ -611,74 +613,78 @@ const CompanyServicePage = () => {
       </FilterContainer>
 
       <StudentGrid>
-        <StudentCard>
-          <StudentProfile>
-            <ProfileIconContainer>
-              {transformedData.profileImage ? (
-                <img
-                  src={transformedData.profileImage}
-                  alt={`${transformedData.name} 프로필`}
-                />
-              ) : (
-                <ProfileIcon />
-              )}
-            </ProfileIconContainer>
-            <div>
-              <StudentName>{transformedData.name}</StudentName>
-              <StudentInfo>{transformedData.school}</StudentInfo>
-              <StudentInfo>{transformedData.course}</StudentInfo>
-            </div>
-          </StudentProfile>
+        {transformedData.map((student) => (
+          <StudentCard key={student.id}>
+            <StudentProfile>
+              <ProfileIconContainer>
+                {student.profileImage ? (
+                  <img
+                    src={student.profileImage}
+                    alt={`${student.name} 프로필`}
+                  />
+                ) : (
+                  <ProfileIcon />
+                )}
+              </ProfileIconContainer>
+              <div>
+                <StudentName>{student.name}</StudentName>
+                <StudentInfo>{student.school}</StudentInfo>
+                <StudentInfo>{student.course}</StudentInfo>
+              </div>
+            </StudentProfile>
 
-          {transformedData.badges && transformedData.badges.length > 0 && (
-            <>
-              <Skills>
-                {transformedData.badges.map((badge, index) => (
-                  <Badge key={index} type={badge}>
-                    {getBadgeIcon(badge)}
-                    {getBadgeText(badge)}
-                  </Badge>
-                ))}
-              </Skills>
-              <SectionDivider />
-            </>
-          )}
+            {student.badges && student.badges.length > 0 && (
+              <>
+                <Skills>
+                  {student.badges.map((badge, index) => (
+                    <Badge key={index} type={badge}>
+                      {getBadgeIcon(badge)}
+                      {getBadgeText(badge)}
+                    </Badge>
+                  ))}
+                </Skills>
+                <SectionDivider />
+              </>
+            )}
 
-          <Skills>
-            {transformedData.skills.map((skill) => (
-              <SkillTag key={skill}>{skill}</SkillTag>
-            ))}
-          </Skills>
-
-          {transformedData.projects && transformedData.projects.length > 0 && (
-            <>
-              <SectionDivider />
-              {transformedData.projects.map((project, index) => (
-                <PortfolioPreview key={index}>
-                  <ProjectTitle>{project.title}</ProjectTitle>
-                  <ProjectDescription>{project.description}</ProjectDescription>
-                  {project.image && (
-                    <ProjectImage src={project.image} alt={project.title} />
-                  )}
-                </PortfolioPreview>
+            <Skills>
+              {student.skills.map((skill) => (
+                <SkillTag key={skill}>{skill}</SkillTag>
               ))}
-            </>
-          )}
+            </Skills>
 
-          {transformedData.portfolio && (
-            <PortfolioLink
-              href={transformedData.portfolio}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              전체 포트폴리오 보기 <FaExternalLinkAlt size="0.8em" />
-            </PortfolioLink>
-          )}
+            {student.projects && student.projects.length > 0 && (
+              <>
+                <SectionDivider />
+                {student.projects.map((project, index) => (
+                  <PortfolioPreview key={index}>
+                    <ProjectTitle>{project.title}</ProjectTitle>
+                    <ProjectDescription>
+                      {project.description}
+                    </ProjectDescription>
+                    {project.image && (
+                      <ProjectImage src={project.image} alt={project.title} />
+                    )}
+                  </PortfolioPreview>
+                ))}
+              </>
+            )}
 
-          <ConnectButton onClick={() => handleConnect(transformedData.id)}>
-            🚀 커넥트 요청
-          </ConnectButton>
-        </StudentCard>
+            {student.portfolio && (
+              <PortfolioLink
+                href={student.portfolio}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                전체 포트폴리오 보기 <FaExternalLinkAlt size="0.8em" />
+              </PortfolioLink>
+            )}
+
+            <ConnectButton onClick={() => handleConnect(student.id)}>
+              🚀 커넥트 요청
+            </ConnectButton>
+          </StudentCard>
+        ))}
       </StudentGrid>
     </Container>
   );
