@@ -469,6 +469,37 @@ const TechTag = styled.span`
   font-size: 0.9rem;
 `;
 
+const LoadingSpinner = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: ${theme.spacing.lg};
+
+  &::after {
+    content: "";
+    width: 50px;
+    height: 50px;
+    border: 5px solid ${theme.colors.primary}20;
+    border-top-color: ${theme.colors.primary};
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const LoadingText = styled.p`
+  color: ${theme.colors.text};
+  font-size: 1.1rem;
+  font-weight: 500;
+`;
+
 const getBadgeIcon = (type) => {
   switch (type) {
     case "grand":
@@ -535,7 +566,11 @@ const CompanyServicePage = () => {
   }, []);
 
   if (!resumeData) {
-    return <div>로딩중...</div>;
+    return (
+      <LoadingSpinner>
+        <LoadingText>학생 프로필을 불러오는 중입니다...</LoadingText>
+      </LoadingSpinner>
+    );
   }
 
   const handleConnect = (studentId) => {
