@@ -511,9 +511,14 @@ const CompanyServicePage = () => {
   useEffect(() => {
     const fetchResume = async () => {
       try {
-        const response = await apis.getResume();
-        if (response && response.status === 200) {
-          setResumeData(response.data);
+        const response = await apis.getStudentProfiles();
+        if (
+          response &&
+          response.status === 200 &&
+          Array.isArray(response.data) &&
+          response.data.length > 0
+        ) {
+          setResumeData(response.data[0]); // 첫 번째 학생 데이터만 사용
         } else {
           console.error("이력서 조회 실패:", response);
           setResumeData(null);
@@ -537,13 +542,13 @@ const CompanyServicePage = () => {
 
   // 백엔드 데이터를 StudentCard 형식에 맞게 변환
   const transformedData = {
-    id: resumeData.id,
-    name: resumeData.name,
-    profileImage: resumeData.profile_image,
-    course: resumeData.course,
+    id: resumeData.user.id,
+    name: resumeData.user.name,
+    profileImage: resumeData.user.profile_image,
+    course: resumeData.user.course,
     school: resumeData.education?.[0]?.school,
-    skills: resumeData.skills || [],
-    portfolio: resumeData.portfolio,
+    skills: resumeData.user.skills || [],
+    portfolio: resumeData.user.portfolio,
     badges: [], // 백엔드 데이터에서 적절한 뱃지 정보 매핑 필요
     projects:
       resumeData.projects?.map((project) => ({
