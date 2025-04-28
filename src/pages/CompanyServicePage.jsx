@@ -123,7 +123,7 @@ const FilterButton = styled.button`
 
 const StudentGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: ${theme.spacing.xl};
   margin-top: ${theme.spacing.xl};
 `;
@@ -578,7 +578,7 @@ const ProjectCardProject = styled.div`
 
 const ProjectCardDesc = styled.div`
   color: ${theme.colors.gray};
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 400;
   line-height: 1.7;
   margin-top: 6px;
