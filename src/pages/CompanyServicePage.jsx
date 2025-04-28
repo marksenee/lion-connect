@@ -15,6 +15,9 @@ import {
   FaBriefcase,
   FaAward,
   FaCertificate,
+  FaUniversity,
+  FaBook,
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 const fadeInUp = keyframes`
@@ -139,6 +142,7 @@ const StudentCard = styled.div`
   flex-direction: column;
   animation: ${fadeInUp} 0.5s ease-out forwards;
   opacity: 0;
+  position: relative;
 
   &:hover {
     transform: translateY(-6px);
@@ -148,21 +152,22 @@ const StudentCard = styled.div`
 
 const StudentProfile = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: ${theme.spacing.lg};
+  gap: ${theme.spacing.md};
 `;
 
 const ProfileIconContainer = styled.div`
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  margin-right: ${theme.spacing.md};
   background-color: ${theme.colors.lightGray};
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border: 2px solid ${theme.colors.primary}30;
+  flex-shrink: 0;
 
   img {
     width: 100%;
@@ -171,23 +176,70 @@ const ProfileIconContainer = styled.div`
   }
 
   svg {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     color: ${theme.colors.gray};
   }
 `;
 
+const StudentInfoContainer = styled.div`
+  flex: 1;
+`;
+
 const StudentName = styled.h3`
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   color: ${theme.colors.text};
-  margin-bottom: ${theme.spacing.xxs};
+  margin-bottom: ${theme.spacing.xs};
   font-weight: 600;
 `;
 
 const StudentInfo = styled.p`
   color: ${theme.colors.gray};
-  margin-bottom: 0;
-  font-size: 0.9rem;
+  margin-bottom: ${theme.spacing.xxs};
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.xs};
+
+  svg {
+    color: ${theme.colors.primary};
+  }
+`;
+
+const EducationInfo = styled.div`
+  background-color: ${theme.colors.background};
+  padding: ${theme.spacing.md};
+  border-radius: ${theme.borderRadius.md};
+  margin: ${theme.spacing.md} 0;
+`;
+
+const EducationTitle = styled.h4`
+  font-size: 1.1rem;
+  color: ${theme.colors.primary};
+  margin-bottom: ${theme.spacing.sm};
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.xs};
+`;
+
+const EducationDetail = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.sm};
+  color: ${theme.colors.text};
+  font-size: 0.95rem;
+`;
+
+const EducationItem = styled.span`
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.xs};
+
+  &:not(:last-child)::after {
+    content: "|";
+    color: ${theme.colors.gray};
+    margin-left: ${theme.spacing.xs};
+  }
 `;
 
 const SectionDivider = styled.hr`
@@ -500,6 +552,50 @@ const LoadingText = styled.p`
   font-weight: 500;
 `;
 
+const ProjectPortfolioBox = styled.div`
+  background: #f6fbff;
+  border-radius: 18px;
+  padding: 28px 28px 20px 28px;
+  margin-bottom: ${theme.spacing.md};
+  box-shadow: none;
+  border-left: 6px solid ${theme.colors.primary};
+`;
+
+const ProjectPortfolioTitle = styled.h3`
+  color: ${theme.colors.primary};
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+`;
+
+const ProjectTitleMain = styled.div`
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: ${theme.colors.text};
+  margin-bottom: 6px;
+`;
+
+const ProjectDesc = styled.div`
+  color: ${theme.colors.gray};
+  font-size: 1rem;
+  font-weight: 400;
+`;
+
+const ProjectMetaLine = styled.div`
+  color: ${theme.colors.gray};
+  font-size: 0.98rem;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+`;
+
+const Bullet = styled.span`
+  color: ${theme.colors.primary};
+  font-size: 1.1em;
+  margin-right: 6px;
+`;
+
 const getBadgeIcon = (type) => {
   switch (type) {
     case "grand":
@@ -532,6 +628,17 @@ const getBadgeText = (type) => {
     default:
       return type;
   }
+};
+
+// 날짜 포맷 함수 추가
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d)) return "";
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}.${mm}.${dd}`;
 };
 
 const CompanyServicePage = () => {
@@ -584,6 +691,9 @@ const CompanyServicePage = () => {
     profileImage: student.user.profile_image,
     course: student.user.course,
     school: student.education?.[0]?.school,
+    major: student.education?.[0]?.major,
+    startDate: student.education?.[0]?.start_date,
+    endDate: student.education?.[0]?.end_date,
     skills: student.user.skills || [],
     portfolio: student.user.portfolio,
     badges: [], // 백엔드 데이터에서 적절한 뱃지 정보 매핑 필요
@@ -661,11 +771,13 @@ const CompanyServicePage = () => {
                   <ProfileIcon />
                 )}
               </ProfileIconContainer>
-              <div>
+              <StudentInfoContainer>
                 <StudentName>{student.name}</StudentName>
-                <StudentInfo>{student.school}</StudentInfo>
-                <StudentInfo>{student.course}</StudentInfo>
-              </div>
+                <StudentInfo>
+                  <FaGraduationCap />
+                  {student.course}
+                </StudentInfo>
+              </StudentInfoContainer>
             </StudentProfile>
 
             {student.badges && student.badges.length > 0 && (
@@ -689,20 +801,47 @@ const CompanyServicePage = () => {
             </Skills>
 
             {student.projects && student.projects.length > 0 && (
-              <>
-                <SectionDivider />
+              <ProjectPortfolioBox>
+                <ProjectPortfolioTitle>학력</ProjectPortfolioTitle>
                 {student.projects.map((project, index) => (
-                  <PortfolioPreview key={index}>
-                    <ProjectTitle>{project.title}</ProjectTitle>
-                    <ProjectDescription>
-                      {project.description}
-                    </ProjectDescription>
-                    {project.image && (
-                      <ProjectImage src={project.image} alt={project.title} />
-                    )}
-                  </PortfolioPreview>
+                  <div
+                    key={index}
+                    style={{
+                      marginBottom:
+                        index !== student.projects.length - 1 ? "18px" : 0,
+                    }}
+                  >
+                    <ProjectMetaLine>
+                      <Bullet>•</Bullet>
+                      {student.school || "학교 미입력"}
+                      {student.major || "전공 미입력"}
+                      {student.startDate && student.endDate
+                        ? `${formatDate(student.startDate)} ~ ${formatDate(
+                            student.endDate
+                          )}`
+                        : "기간 미입력"}
+                    </ProjectMetaLine>
+
+                    <ProjectPortfolioTitle>프로젝트</ProjectPortfolioTitle>
+
+                    <ProjectMetaLine>
+                      {" "}
+                      <Bullet>•</Bullet>
+                      {project.title}
+                    </ProjectMetaLine>
+                  </div>
                 ))}
-              </>
+              </ProjectPortfolioBox>
+            )}
+
+            {student.portfolio && (
+              <PortfolioLink
+                href={student.portfolio}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                이력서 보기 <FaExternalLinkAlt size="0.8em" />
+              </PortfolioLink>
             )}
 
             {student.portfolio && (
