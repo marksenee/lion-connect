@@ -123,7 +123,7 @@ const FilterButton = styled.button`
 
 const StudentGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: ${theme.spacing.xl};
   margin-top: ${theme.spacing.xl};
 `;
@@ -262,27 +262,17 @@ const Badge = styled.span`
   }
 `;
 
-const PortfolioLink = styled.a`
+const PortfolioTextLink = styled.a`
   color: ${theme.colors.primary};
+  font-weight: 600;
+  font-size: 1rem;
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: ${theme.spacing.xs};
-  margin-top: auto;
-  padding-top: ${theme.spacing.md};
-  font-weight: 500;
-  transition: ${theme.transitions.fast};
-
+  display: inline-block;
+  margin-top: 12px;
+  transition: color 0.2s;
   &:hover {
     color: ${theme.colors.secondary};
     text-decoration: underline;
-    svg {
-      transform: translateX(2px);
-    }
-  }
-
-  svg {
-    transition: transform 0.2s ease;
   }
 `;
 
@@ -500,6 +490,98 @@ const LoadingText = styled.p`
   font-weight: 500;
 `;
 
+const MainProject = styled.div`
+  background: ${theme.colors.background};
+  border-radius: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  text-align: center;
+`;
+
+const MainProjectImage = styled.img`
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+`;
+
+const MainProjectTitle = styled.h3`
+  font-size: 1.2rem;
+  color: ${theme.colors.primary};
+  font-weight: bold;
+  margin-bottom: 8px;
+`;
+
+const MainProjectDescription = styled.p`
+  color: ${theme.colors.text};
+  font-size: 1rem;
+  margin-bottom: 0;
+`;
+
+const PortfolioButton = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    90deg,
+    ${theme.colors.primary},
+    ${theme.colors.secondary}
+  );
+  color: white;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 12px 0;
+  margin-top: 24px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: linear-gradient(
+      90deg,
+      ${theme.colors.secondary},
+      ${theme.colors.primary}
+    );
+    text-decoration: underline;
+  }
+
+  svg {
+    margin-right: 8px;
+  }
+`;
+
+const ProjectCard = styled.div`
+  background: #f7fbff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  border-left: 6px solid ${theme.colors.primary};
+  box-shadow: 0 2px 8px rgba(0, 80, 200, 0.04);
+`;
+
+const ProjectCardTitle = styled.div`
+  color: ${theme.colors.primary};
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+`;
+
+const ProjectCardProject = styled.div`
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: ${theme.colors.text};
+  margin-bottom: 4px;
+`;
+
+const ProjectCardDesc = styled.div`
+  color: ${theme.colors.gray};
+  font-size: 1rem;
+  font-weight: 400;
+`;
+
 const getBadgeIcon = (type) => {
   switch (type) {
     case "grand":
@@ -584,6 +666,7 @@ const CompanyServicePage = () => {
     profileImage: student.user.profile_image,
     course: student.user.course,
     school: student.education?.[0]?.school,
+    major: student.education?.[0]?.major,
     skills: student.user.skills || [],
     portfolio: student.user.portfolio,
     badges: [], // 백엔드 데이터에서 적절한 뱃지 정보 매핑 필요
@@ -629,22 +712,6 @@ const CompanyServicePage = () => {
             </FilterButton>
           ))}
         </FilterGroup>
-        <FilterGroup>
-          <FilterLabel>정렬:</FilterLabel>
-          {["recent", "popular", "recommended"].map((filter) => (
-            <FilterButton
-              key={filter}
-              active={selectedFilter === filter}
-              onClick={() => setSelectedFilter(filter)}
-            >
-              {filter === "recent"
-                ? "최신순"
-                : filter === "popular"
-                ? "인기순"
-                : "추천순"}
-            </FilterButton>
-          ))}
-        </FilterGroup>
       </FilterContainer>
 
       <StudentGrid>
@@ -663,11 +730,12 @@ const CompanyServicePage = () => {
               </ProfileIconContainer>
               <div>
                 <StudentName>{student.name}</StudentName>
-                <StudentInfo>{student.school}</StudentInfo>
+                <StudentInfo>
+                  {student.school} / {student.major}
+                </StudentInfo>
                 <StudentInfo>{student.course}</StudentInfo>
               </div>
             </StudentProfile>
-
             {student.badges && student.badges.length > 0 && (
               <>
                 <Skills>
@@ -681,40 +749,40 @@ const CompanyServicePage = () => {
                 <SectionDivider />
               </>
             )}
-
             <Skills>
               {student.skills.map((skill) => (
                 <SkillTag key={skill}>{skill}</SkillTag>
               ))}
             </Skills>
-
             {student.projects && student.projects.length > 0 && (
-              <>
-                <SectionDivider />
-                {student.projects.map((project, index) => (
-                  <PortfolioPreview key={index}>
-                    <ProjectTitle>{project.title}</ProjectTitle>
-                    <ProjectDescription>
-                      {project.description}
-                    </ProjectDescription>
-                    {project.image && (
-                      <ProjectImage src={project.image} alt={project.title} />
-                    )}
-                  </PortfolioPreview>
-                ))}
-              </>
+              <ProjectCard>
+                <ProjectCardTitle>대표 프로젝트</ProjectCardTitle>
+                <ProjectCardProject>
+                  {student.projects[0].title}
+                </ProjectCardProject>
+                <ProjectCardDesc>
+                  {student.projects[0].description}
+                </ProjectCardDesc>
+              </ProjectCard>
             )}
-
             {student.portfolio && (
-              <PortfolioLink
+              <PortfolioTextLink
                 href={student.portfolio}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                전체 포트폴리오 보기 <FaExternalLinkAlt size="0.8em" />
-              </PortfolioLink>
+                전체 포트폴리오 바로가기 →
+              </PortfolioTextLink>
             )}
-
+            {student.portfolio && (
+              <PortfolioTextLink
+                href={student.portfolio}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                이력서 보기 →
+              </PortfolioTextLink>
+            )}
             <ConnectButton onClick={() => handleConnect(student.id)}>
               🚀 커넥트 요청
             </ConnectButton>

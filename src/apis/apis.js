@@ -95,6 +95,7 @@ export const apis = {
   getStudentProfiles: async () => {
     try {
       const response = await api.get("/user/studentsprofile");
+      console.log("전체 수료생 프로필 조회 응답:", response);
       return response;
     } catch (error) {
       return error.response;
