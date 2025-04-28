@@ -593,7 +593,6 @@ const ProjectMetaLine = styled.div`
 const Bullet = styled.span`
   color: ${theme.colors.primary};
   font-size: 1.1em;
-  margin-right: 6px;
 `;
 
 const getBadgeIcon = (type) => {
@@ -802,7 +801,7 @@ const CompanyServicePage = () => {
 
             {student.projects && student.projects.length > 0 && (
               <ProjectPortfolioBox>
-                <ProjectPortfolioTitle>학력</ProjectPortfolioTitle>
+                {/* <ProjectPortfolioTitle>학력</ProjectPortfolioTitle> */}
                 {student.projects.map((project, index) => (
                   <div
                     key={index}
@@ -813,20 +812,25 @@ const CompanyServicePage = () => {
                   >
                     <ProjectMetaLine>
                       <Bullet>•</Bullet>
+                      {"학력 : "}
                       {student.school || "학교 미입력"}
+                      {"/"}
                       {student.major || "전공 미입력"}
+                      {"("}
                       {student.startDate && student.endDate
                         ? `${formatDate(student.startDate)} ~ ${formatDate(
                             student.endDate
                           )}`
                         : "기간 미입력"}
+                      {")"}
                     </ProjectMetaLine>
 
-                    <ProjectPortfolioTitle>프로젝트</ProjectPortfolioTitle>
+                    {/* <ProjectPortfolioTitle>프로젝트</ProjectPortfolioTitle> */}
 
                     <ProjectMetaLine>
                       {" "}
                       <Bullet>•</Bullet>
+                      {"프로젝트 : "}
                       {project.title}
                     </ProjectMetaLine>
                   </div>
