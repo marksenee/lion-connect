@@ -580,6 +580,10 @@ const ProjectCardDesc = styled.div`
   color: ${theme.colors.gray};
   font-size: 1rem;
   font-weight: 400;
+  line-height: 1.7;
+  margin-top: 6px;
+  white-space: pre-line;
+  word-break: keep-all;
 `;
 
 const getBadgeIcon = (type) => {
