@@ -586,6 +586,12 @@ const ProjectCardDesc = styled.div`
   word-break: keep-all;
 `;
 
+const Bullet = styled.span`
+  color: ${theme.colors.primary};
+  font-size: 1.1em;
+  margin-right: 6px;
+`;
+
 const getBadgeIcon = (type) => {
   switch (type) {
     case "grand":
@@ -765,7 +771,15 @@ const CompanyServicePage = () => {
                   {student.projects[0].title}
                 </ProjectCardProject>
                 <ProjectCardDesc>
-                  {student.projects[0].description}
+                  {student.projects[0].description
+                    .split("\n")
+                    .filter((line) => line.trim() !== "")
+                    .map((line, idx) => (
+                      <div key={idx}>
+                        <Bullet>•</Bullet>
+                        {line.replace(/^[-]\s*/, "")}
+                      </div>
+                    ))}
                 </ProjectCardDesc>
               </ProjectCard>
             )}
